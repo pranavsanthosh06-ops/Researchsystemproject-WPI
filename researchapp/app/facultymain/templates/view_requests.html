@@ -1,0 +1,52 @@
+{% block content %}
+    <h3>My Reference Requests</h3>
+    <hr>
+    {% if references %}
+        <table class = "table table-striped border-3 align-middle" style = "background-color: rgb(190, 147, 67);">
+             <thead>
+                <tr>
+                        <th width = 10%> Student Name </td>
+                        <th width = 10%> Date Submitted </td>
+                        <th width = 10%> For Position </td>
+                        <th width = 5%> Reference Status </td>
+                        <th width = 10%> Actions </td>
+                </tr>
+                </thead>
+
+        {% for ref in references %}
+            <tbody>
+                <tr>
+                        <td width = 10%> <a href="{{ url_for('facultymain.view_student_profile', student_id=ref.applicant.id) }}">{{ref.applicant.firstname}} {{ref.applicant.lastname}} </a> </td>
+                        <td width = 10%> {{moment(ref.timestamp).format('LL')}}</td>
+                        <td width = 10%> <a href="{{ url_for('facultymain.my_position_details', position_id=ref.position_id) }}">{{ref.position.position_title}} </a> </td>
+                        <td width = 5%>
+                            {% if ref.get_reference_status().value == "Pending" %}
+                                    <p > <span class = "badge bg-primary" style = "color:white"> Awaiting approval</span></p>
+                            {% elif ref.get_reference_status().value == "Approved" %}
+                                    <p > <span class = "badge bg-success" style = "color:rgb(255, 255, 255)"> Recommended </span></p>
+                            {% elif ref.get_reference_status().value == "Rejected" %}
+                                    <p>  <span class = "badge bg-danger" style = "color:rgb(255, 255, 255)"> Not Recommended </span></p>
+                            {% endif %}</td>
+                        <td width = 10%> <form action = "{{url_for('facultymain.accept_request', application_id = ref.application_id)}}" style="display:inline-block;"  method="POST">
+                                        {{ aform.hidden_tag() }}
+                                        {{ aform.submit(class="btn btn-outline-success border-2", style="width:120px") }}
+                                        </form> 
+                                         <form action = "{{url_for('facultymain.deny_request', application_id = ref.application_id)}}" style="display:inline-block;" method="POST">
+                                        {{ dform.hidden_tag() }}
+                                        {{ dform.submit(class="btn btn-outline-danger border-2", style="width:120px") }}
+				        </form> </td>
+                </tr>
+                </thead>
+        {% endfor %}
+        </table>
+
+    {% else %}
+        <p> You have no reference requests </p>
+    {% endif %}
+
+
+    <br>
+
+    <a href="{{ url_for('facultymain.mypositions') }}" class="btn btn-primary border-2" style="width: 20%;"> Back </a>
+
+{% endblock %}

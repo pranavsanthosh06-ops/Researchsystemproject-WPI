@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Display Faculty Profile</h1>
+    <div class = "border rounded-3 bg-light p-3">
+        <h2> Faculty username: {{faculty.get_username()}}</h2>
+        <p> <b>Name:</b>
+			{% if faculty.get_firstname()%}
+				{{faculty.get_firstname()}}
+			{% endif%}
+            {% if faculty.get_lastname()%}
+				{{faculty.get_lastname()}}
+			{% endif%}
+		</p>
+        <p> <b>Email:</b>
+			{% if faculty.get_email()%}
+				{{faculty.get_email()}}
+			{% endif%}
+		</p>
+	</div>
+	<br>
+	<p><a href="{{ url_for('facultymain.edit_profile') }}" class='btn btn-primary border-2 col-2'>Edit your profile</a></p>
+<br>
+{% include "view_requests.html" %}
+
+{% endblock %}

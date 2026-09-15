@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hello, Prof. {{current_user.firstname}} {{current_user.lastname}}!</h1>
+    <hr>
+    {% if faculty.get_positions_posted() %}
+        <p> <b> Posted positions: </b></p>
+        <table class = "table table-striped border-3 align-middle" style = "background-color: rgb(190, 147, 67);">
+             <thead>
+                <tr>
+                        <th width = 15%> Position Title </th>
+                        <th width = 10%> Start Date </th>
+                        <th width = 10%> End Date </th>
+                        <th width = 10%> Team Size </th>
+                        <th width = 15%> Actions </th>
+                </tr>
+                </thead>
+
+        {% for pos in faculty.get_positions_posted() %}
+            <tbody>
+                <tr>
+                        <td width = 15%> <a href="javascript:void(0)" onclick="get_position('{{ pos.position_id }}')">{{pos.position_title}} </a> </td>
+                        <td width = 10%> {{moment(pos.start_date).format('LL')}} </td>
+                        <td width = 10%> {{moment(pos.end_date).format('LL')}} </td>
+                        <td width = 10%> {{pos.team_size}} </td>
+                        <td width = 15%>
+                            <a class="green-btn btn btn-primary col-8" href="javascript:void(0)" onclick="get_applications('{{ pos.position_id }}')"> View Applications </a>
+
+                            <!-- outdated -->
+                            <!-- {% for app in pos.get_position_apps() %}
+                                {% if app.get_application_status().value == "Approved" %}
+                                    <p><a href="{{url_for('facultymain.view_app', position_id=pos.position_id, application_id = app.application_id)}}" class="green-btn btn btn-primary col-12">
+                                        View {{app.applicant.get_fullname()}}'s Application
+                                    </a> <br></p>
+                                {% else %}
+                                    {% if app.get_application_status().value == "Pending" %}
+                                        <p><a href="{{url_for('facultymain.view_app', position_id=pos.position_id, application_id = app.application_id)}}" class="blue-btn btn btn-primary col-12">
+                                            View {{app.applicant.get_fullname()}}'s Application
+                                        </a> <br></p>
+                                    {%elif app.get_application_status().value == "Pending"%}
+                                        <p><a href="{{url_for('facultymain.view_app', position_id=pos.position_id, application_id = app.application_id)}}" class="red-btn btn btn-primary col-12">
+                                            View {{app.applicant.get_fullname()}}'s Application
+                                        </a> <br></p>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %} -->
+                        </td>
+                </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+        {% block script %}
+            <script>
+                // position
+                async function get_position(position_id) {
+                    const url = "{{url_for('facultymain.my_position_data', position_id = 'POSITION_ID')}}".replace("POSITION_ID", position_id);
+                    try {
+                        const response = await fetch(url);
+                        if(!response.ok) {
+                            throw new Error(`Response status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        console.log(json)
+                        build_position(position_id, json);
+                    } catch(error) {
+                        console.error(error.message)
+                    }
+                }
+
+                function build_position(position_id, data) {
+                    reset_position();
+                    const main_div = document.getElementById("position-details-div");
+                    const pos_container = document.getElementById("position-card-container");
+                    const card = `<div class="card" style="width: 100%; background-color: #f5f0eb;">
+                            <div class="card-header" style="background-color: rgb(231, 170, 170)">
+                            <h3 style="background-color: rgb(231, 170, 170);">${data.position_title}</h3>
+                            </div>
+                                <div class="card-body">
+                                    <p> <strong> Posted by </strong>:  ${data.advisor}</p>
+                                    <p> <strong> Description</strong>:  ${data.description}</p>
+                                    <p> <strong> Research Topics</strong>: ${data.topics.join(", ")}</p>
+                                    <p> <strong> Required Courses</strong>: ${data.courses.join(", ")}</p>
+                                    <p> <strong> Required Languages</strong>: ${data.languages.join(", ")}</p>
+                                    <p> <strong> Preferred Majors</strong>: ${data.majors.join(", ")}</p>
+                                    </div>
+                            </div>`
+
+                        pos_container.innerHTML = card;
+
+                    main_div.hidden = false;
+                }
+
+                function reset_position() {
+                    document.getElementById("position-card-container").innerHTML = "";
+                    document.getElementById("position-details-div").hidden = true;
+
+                }
+
+                // application
+                async function get_applications(position_id) {
+                    const url = "{{url_for('facultymain.application_data', position_id="position_id")}}".replace("position_id", position_id);
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`Response status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        console.log(json);
+                        build_applications(position_id, json);
+                    } catch(error) {
+                        console.error(error.message)
+                    }
+                }
+
+                function build_applications(position_id, data) {
+                    reset_applications();
+                    const main_div = document.getElementById("application-buttons-div");
+                    const app_container = document.getElementById("application-card-container");
+                    let html = `<div class="card" style="width: 100%; background-color: #f5f0eb;">
+                            <div class="card-header" style="background-color: rgb(231, 170, 170)">
+                            <h3 style="background-color: rgb(231, 170, 170);">${data.position_title}</h3>
+                            </div>
+                                <div class="card-body">
+                                    <div class="row">`;
+                    data.applications.forEach(app => {
+                        html += `
+                        <div class="card col-3">
+                            <p> <strong> Applicant</strong>: ${ app.applicant_name }</p>
+                            <p id="app-status-badge"> <strong> Application Status</strong>: ${ app.status }</p>
+                            <p> <strong> Application</strong>: <a class="blue-btn btn btn-primary col-3" href="/position/${position_id}/${app.id}"> View </a></p>
+                        </div>
+                        `;
+                    })
+                    html += `
+                                    </div>
+                                </div>
+                            </div>`;
+                    const card = html;
+
+                    app_container.innerHTML = card;
+
+                    main_div.hidden = false;
+                }
+
+                function reset_applications() {
+                    document.getElementById("application-card-container").innerHTML = "";
+                    document.getElementById("application-buttons-div").hidden = true;
+                }
+            </script>
+        {% endblock %}
+
+    {% else %}
+        <p> Faculty member has not posted any positions </p>
+    {% endif %}
+    <hr>
+
+    <div id="position-details-div" hidden = true>
+        <div id = "position-card-container"> </div>
+        <button class="btn btn-secondary mt-3" onclick="reset_position()" > Collapse </button>
+    </div>
+    <br>
+    <div id="application-buttons-div" hidden = true>
+        <div id="application-card-container"></div>
+        <button class="btn btn-secondary mt-3" onclick="reset_applications()"> Collapse </button>
+    </div>
+    <br>
+    <a href="{{ url_for('facultymain.postposition') }}" class="btn btn-primary border-2" style="width: 20%;"> Post New Research Position </a>
+
+{% endblock %}

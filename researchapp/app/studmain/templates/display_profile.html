@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Display Student Profile</h1>
+    <div class = "border rounded-3 bg-light p-3">
+        <h2> Student username: {{student.get_username()}}</h2>
+        <p> <b>Name:</b> {% if student.get_firstname()%}{{student.get_firstname()}}  {% endif%}
+                        {% if student.get_lastname()%}{{student.get_lastname()}} {% endif%}</p>
+        <p> <b>Email:</b> {% if student.get_email()%}{{student.get_email()}}{% endif%} </p>
+        <p> <b>WPI ID:</b> {% if student.get_wpi_id()%}{{student.get_wpi_id()}}{% endif%} </p>
+        <p> <b>Cumulative GPA:</b> {% if student.get_gpa()%}{{student.get_gpa()}}{% endif%} </p>
+        <p> <b>Programming Languages:</b> <br>
+            {% if student.get_programming_languages()%}
+                {% for lang in student.get_programming_languages()%}
+                    {{lang.lang_name}} <br>
+                {% endfor %}
+            {% else %}
+            <p> No languages added </p>
+            {% endif%} </p>
+        <p> <b>Topics of Interest:</b> <br>
+            {% if student.get_interested_topics()%}
+                {% for topic in student.get_interested_topics()%}
+                    {{topic.topic_name}} <br>
+                {% endfor %}
+            {% else %}
+            <p> No topics selected </p>
+            {% endif%} </p>
+        <hr>
+        {% if student.get_majors() %}
+            <b>Major(s): </b>
+            {% for major in student.get_majors(): %}
+                {{major.get_name()}}
+                {% if not student.is_last_major(major) %}
+                    /
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>The student is not associated with any majors</p>
+        {% endif %}
+    </div>
+
+    {% if student == current_user %}
+        <p> <a href =  "{{url_for('studentmain.edit_profile')}}" class = "btn btn-primary mt-3 fs-5"> Edit your profile </a></p>
+    {% endif %}
+
+    <hr>
+    {% if student.get_courses_taken() %}
+        <p> <b> Taken courses: </b></p>
+        <table class = "table table-light border-3 align-middle" style = "background-color: rgb(190, 147, 67);">
+             <thead>
+                <tr >
+                    <th width = 20%> Course Name </th>
+                    <th width = 20%> Course Instructor </th>
+                    <th width = 20%> Grade Recieved </th>
+                    {% if student == current_user %}
+                        <th width = 20%> Delete </th>
+                    {% endif %}
+                </tr>
+                </thead>
+
+        {% for course in student.get_courses_taken() %}
+            {% include '_coursetaken.html' %}
+        {% endfor %}
+        </table>
+
+    {% else %}
+        <p> Student is not enrolled in any courses.</p>
+    {% endif %}
+
+
+    <hr>
+
+    {% if student == current_user %}
+        <form action="{{url_for('studentmain.addclass')}}" method = "POST">
+            {{form.hidden_tag()}}
+            {{form.submit(value='Add class', class='btn btn-primary border-2 col-2')}}
+        </form>
+    {% endif %}
+
+{% endblock %}

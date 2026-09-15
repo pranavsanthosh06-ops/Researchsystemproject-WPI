@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% import "bootstrap_wtf.html" as wtf %}
+{% block content %}
+	<div class = "row">
+		<div class = "card col-md-4" style="background-color: #f5f0eb; margin: 0px 15px 0px 15px">
+			<h1> Remove Elements </h1>
+			<form action = "{{url_for('facultymain.delete_lists')}}" method = "POST">
+				{{ dlform.hidden_tag() }}
+
+				{{ dlform.majors.label }} <br>
+				{{ dlform.majors(style="list-style-type: none;") }}
+				{{ dlform.courses.label }} <br>
+				{{ dlform.courses(style="list-style-type: none;") }}
+				{{ dlform.topics.label }} <br>
+				{{ dlform.topics(style="list-style-type: none;") }}
+				{{ dlform.languages.label }} <br>
+				{{ dlform.languages(style="list-style-type: none;") }}
+
+				{{wtf.form_field(dlform.submit)}}
+			</form>
+		</div>
+		<div class = "card col-md-3" style="background-color: #f5f0eb; margin: 0px 15px 0px 15px">
+			<h1> Add Elements </h1>
+			<form action = "{{url_for('facultymain.add_lists')}}" method = "POST">
+				{{alform.hidden_tag()}}
+
+				{{wtf.form_field(alform.new_major_dept)}}
+				{{wtf.form_field(alform.new_major_name)}}
+				{{wtf.form_field(alform.new_topic)}}
+				{{wtf.form_field(alform.new_lang)}}
+
+				{{wtf.form_field(alform.submit)}}
+			</form>
+		</div>
+		<div class = "card col-md-4" style="background-color: #f5f0eb; margin: 0px 15px 0px 15px">
+			{% include 'add_courses.html' %}
+		</div>
+	</div>
+
+{% endblock %}

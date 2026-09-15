@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class = "bluetitle">Class Roster: {{course.get_major().get_name()}} {{course.get_coursenum()}} - {{course.get_title()}}</h1>
+    <table class = "studenttable">
+        <thead>
+        <tr valign = "bottom">
+            <th width = "20%"> Name </td>
+            <th width = "30%"> Email </td>
+            <th width = "30%"> Address </td>
+            <th width = "20%"> Student last seen at: </td>
+        </tr>
+        </thead>
+        {% for enrollment in enrollments %}
+            {% set student = enrollment.get_student() %}
+            {% include '_student.html' %}
+        {% endfor %}
+    </table>
+    <hr class = "solid">
+    <a href = "{{url_for('studentmain.index')}}" class = "button"> Return to main page </a>
+{% endblock %}

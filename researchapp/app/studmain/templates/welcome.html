@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block content %}
+    <div class = "container">
+        <h1 class="stdfont"> Welcome to ResearchConnect!</h1>
+        <h7 class="stdbodyfont"> A place where students and faculty can begin exciting research projects!</h7> <br>
+        <div class="row">
+            <div class="col-3 mb-3">
+                <a href = "{{url_for('studentauth.register')}}" class="btn btn-main stdbuttonfont" >
+                Students: Create an account
+            </a>
+            </div>
+            <div class="col-3 mb-3 me-10">
+                <a href = "{{url_for('facultyauth.activate')}}" class="btn btn-facmain stdbuttonfont">
+                    Faculty: Activate your account
+                </a>
+            </button>
+            </button>
+            </div>
+            <div class = "col12">
+                <img src="{{url_for('static', filename='img//wpi_campus.jpg')}}" style="width:100%; height:90%">
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+

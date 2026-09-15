@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% import "bootstrap_wtf.html" as wtf %}
+{% block content %}
+    <h1> Activate your account </h1>
+
+    <form action = "{{url_for('facultyauth.verify')}}" method = "POST">
+        {{aform.hidden_tag()}}
+
+        {{ aform.email.label }} <br>
+        {{ aform.email(style="list-style-type: none;") }}
+        {{wtf.form_field(aform.submit)}}
+    </form>
+    <form action = "{{url_for('facultyauth.register')}}" method = "POST">
+        {{vform.hidden_tag()}}
+
+        {{wtf.form_field(vform.username)}}
+        {{wtf.form_field(vform.password)}}
+        {{wtf.form_field(vform.password_check)}}
+        {{wtf.form_field(vform.code)}}
+        {{wtf.form_field(vform.submit)}}
+    </form>
+{% endblock %}

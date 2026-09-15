@@ -1,0 +1,14 @@
+
+    <tr >
+            <td width = 20%> {{course.course_name}}  </td>
+            <td width = 20%> {{course.get_course_instructor_name()}}  </td>
+            <td width = 20%> {{course.grade_recieved}}  </td>
+            {% if student.id == current_user.id %}
+                <td width = 20%>
+                    <form action="{{url_for('studentmain.delete', course_taken_id=course.course_taken_id)}}" method = "POST">
+                        {{form.hidden_tag()}}
+                        {{form.submit(value='Delete Course', class='btn btn-outline-danger border-2 col-6')}}
+                    </form>
+                </td>
+            {% endif %}
+    </tr>

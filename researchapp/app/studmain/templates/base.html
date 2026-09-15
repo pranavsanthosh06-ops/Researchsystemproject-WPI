@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% if title %}
+        <title>{{ title }} - ResearchConnect </title>
+        {% else %}
+        <title>Welcome to ResearchConnect </title>
+        {% endif %}
+        <link
+                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+                rel="stylesheet"
+                integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+                crossorigin="anonymous">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        {{moment.include_moment()}}
+    </head>
+    <body style = "background-color: #f5f0eb;">
+
+
+        <nav class="navbar navbar-light navbar-expand-lg" style="background-color: #f5f0eb; padding-top: 0.10rem">
+                <div class="container">
+                    <img src="{{url_for('static', filename='img//wpi.png')}}" class = "logo" style="width:270px; height:105px"/>
+                    <button class="navbar-toggler" type="button" >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            {% if not current_user.is_anonymous %}
+                                {% if current_user.user_type == "Student" %}
+                                    <li class="nav-item px-1 ms-2 ">
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('studentmain.index') }}"
+                                        style = "border-radius: 6px;">Home</a>
+                                    </li>
+                                    <li class="nav-item px-1 ">
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('studentmain.view_all_applications') }}"
+                                        style = "border-radius: 6px;"> My Applications </a>
+                                    </li>
+                                    <li class="nav-item px-1 " >
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('studentmain.display_profile') }}"
+                                        style = "border-radius: 6px;"> View Profile</a>
+                                    </li>
+                                {% else %}
+                                    <li class="nav-item px-1 ms-2 ">
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('facultymain.mypositions') }}"
+                                        style = "border-radius: 6px;">Home</a>
+                                    </li>
+                                    <li class="nav-item px-1 " >
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('facultymain.edit_lists') }}"
+                                        style = "border-radius: 6px;"> Edit Lists</a>
+                                    </li>
+                                    <li class="nav-item px-1 " >
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('facultymain.display_profile') }}"
+                                        style = "border-radius: 6px;"> View Profile</a>
+                                    </li>
+                                    <li class="nav-item px-1 " >
+                                        <a class="nav-link" aria-current="page" href="{{ url_for('facultymain.postposition') }}"
+                                        style = " border-radius: 6px;"> Post Position </a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+
+                        <ul class="navbar-nav mb-2 mb-lg-0">
+                            {% if current_user.is_anonymous %}
+                            <li class="nav-item ms-2 ">
+                                    <a class="nav-link" aria-current="page" href="{{ url_for('studentmain.main') }}"
+                                    style = "background: #c0c5c9; color: rgb(0, 0, 0); border-radius: 6px;">Home</a>
+                                </li>
+                            <li class="nav-item px-2 ms-auto" style="color:rgb(174, 34, 34);">
+                                <a class="nav-link" aria-current="page" href="{{ url_for('studentauth.login') }}"
+                                style = "background: rgb(174, 34, 34); color: white; border-radius: 6px;">Login</a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item dropdown px-2 ms-auto">
+                                <a class="nav-link dropdown-toggle"
+                                href = "#" id = "logoutDropdown"
+                                role = "button"
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false"
+                                aria-current="page"
+                                style = "background: rgb(174, 34, 34); color: white; border-radius: 6px;"
+                                >Logout</a>
+                                <ul class = "dropdown-menu dropdown-menu-end" aria-labelledby="logoutDropdown">
+                                    <li>
+                                        <a class = "dropdown-item" href="{{ url_for('studentauth.logout') }}" style = "background: #f5f0eb;">Logout</a>
+                                    </li>
+                                    <li>
+                                        <a class = "dropdown-item" href="{{ url_for('studentauth.ssologout') }}" style = "background: #f5f0eb; ">SSO Logout</a>
+                                    </li>
+                                </ul>
+                                
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+
+        <div class="container mt-3">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+        <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous">
+        </script>
+</body>
+</html>

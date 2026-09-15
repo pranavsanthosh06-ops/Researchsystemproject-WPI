@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block content %}
+    {% if current_user.get_user_type() == 'Student' %}
+        <h1>Hello, {{current_user.firstname}} {{current_user.lastname}}!</h1>
+    {% else %}
+        <h1>Hello, Prof. {{current_user.firstname}} {{current_user.lastname}}!</h1>
+    {% endif %}
+
+    {% include '_position.html' %}
+        <br>
+<hr>
+
+{% if not recommended %}
+<a href = "{{url_for('studentmain.recommended_positions')}}" class = "btn btn-main-red" style="width:25%"> View Recommended Positions </a>
+{% else %}
+<a href = "{{url_for('studentmain.index')}}" class = "btn btn-main-red" style="width:25%"> View All Positions </a>
+{% endif %}
+{% endblock %}
+

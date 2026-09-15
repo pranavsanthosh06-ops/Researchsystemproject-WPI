@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">My Applications</h2>
+
+{% if applications|length == 0 %}
+    <div class="alert alert-info">You have not applied to any research positions yet.</div>
+{% else %}
+    <table class="table table-striped">
+        <thead style="background-color:#c0c5c9;">
+            <tr class="table-danger table-bordered">
+                <th>Position</th>
+                <th>Posted by</th>
+                <th>Application Status</th>
+                <th>Reference Requests</th>
+                <th>Submitted On</th>
+                <th>Actions</th>
+                <th>Withdraw</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for app in applications %}
+            <tr>
+
+                
+                <td>{{ app.position.position_title }}</td>
+
+                
+                <td>{{ app.position.advisor.firstname }} {{ app.position.advisor.lastname }}</td>
+
+                
+                <td>
+                    {% if app.get_application_status().value == "Pending" %}
+                        <span class="badge bg-primary" style="color:white">Pending</span>
+                    {% elif app.get_application_status().value == "Approved" %}
+                        <span class="badge bg-success" style="color:white">Approved</span>
+                    {% elif app.get_application_status().value == "Rejected" %}
+                        <span class="badge bg-danger" style="color:white">Denied</span>
+                    {% elif app.get_application_status().value == "Withdrawn" %}
+                        <span class="badge bg-secondary" style="color:white">Withdrawn</span>
+                    {% endif %}
+                </td>
+
+                
+                <td>
+                    {% if app.faculty_ref is none %}
+                        Reference Not Required
+                    {% else %}
+
+                        {% if app.get_application_status().value == "Withdrawn" %}
+                            <span class="badge bg-danger" style="color:white">
+                                Recommendation Rescinded
+                            </span>
+
+                        {% else %}
+                            {% if app.reference_status.value == "Pending" %}
+                                <span class="badge bg-primary" style="color:white">Awaiting approval</span>
+
+                            {% elif app.reference_status.value == "Approved" %}
+                                <span class="badge bg-success" style="color:white">Recommended</span>
+
+                            {% elif app.reference_status.value == "Rejected" %}
+                                <span class="badge bg-danger" style="color:white">Not Recommended</span>
+
+                            {% endif %}
+                        {% endif %}
+
+                    {% endif %}
+                </td>
+
+                <!-- Timestamp -->
+                <td>{{ app.timestamp.strftime("%Y-%m-%d") }}</td>
+
+                
+                <td>
+                    <a href="{{ url_for('studentmain.view_application', application_id=app.application_id) }}"
+                       class="btn btn-main-red">
+                        View Application
+                    </a>
+                </td>
+
+                
+                <td>
+                    {% if app.get_application_status().value == "Pending" %}
+                        <form action="{{ url_for('studentmain.withdraw_application', application_id=app.application_id) }}"
+                              method="post">
+                            <button type="submit" class="btn btn-main-withdraw">Withdraw</button>
+                        </form>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+{% endif %}
+
+{% endblock %}

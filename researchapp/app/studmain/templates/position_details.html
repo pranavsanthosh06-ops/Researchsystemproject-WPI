@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style = "color : rgb(174, 34, 34)">{{ position.position_title }}</h1>
+
+<p ><strong >Posted by:</strong> {{ position.get_advisor_name()}}</p>
+<p ><strong >Minimum GPA:</strong> {{ position.min_gpa }}</p>
+<p><strong>Team Size:</strong> {{ position.team_size }}</p>
+<p><strong>Reference Required:</strong> {{ position.needs_reference() }}</p>
+
+<h3 style = "color:brown">Description:</h3>
+<p>{{ position.description }}</p>
+
+<h3 style = "color:brown">Preferred Major(s)</h3>
+<ul>
+    {% for m in position.get_preferred_majors() %}
+    <li>{{ m.name }}</li>
+    {% endfor %}
+</ul>
+
+<h3 style = "color:brown">Required Courses</h3>
+<ul>
+    {% for c in position.get_required_courses() %}
+    <li>{{ c.coursenum }} - {{ c.title }}</li>
+    {% endfor %}
+</ul>
+
+<h3 style = "color:brown">Research Topics</h3>
+<ul>
+    {% for t in position.get_research_topics() %}
+    <li>{{ t.topic_name }}</li>
+    {% endfor %}
+</ul>
+
+<h3 style = "color:brown">Required Programming Languages</h3>
+<ul>
+    {% for lang in position.get_required_languages() %}
+    <li>{{ lang.lang_name }}</li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('studentmain.index') }}" class="btn btn-primary col-2">Back</a>
+{% endblock %}

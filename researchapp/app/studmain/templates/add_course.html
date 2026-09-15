@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block content %}
+<h1> Add a course you've taken </h1>
+
+<form action = "{{url_for('studentmain.addclass')}}" method = "POST">
+   {{form.hidden_tag()}}
+   {{wtf.form_field(form.title)}}
+   {{wtf.form_field(form.grade_recieved)}}
+   {{wtf.form_field(form.submit)}}
+
+
+</form>
+
+{% endblock %}

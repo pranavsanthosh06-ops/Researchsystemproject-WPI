@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block content %}
+<h1> Edit Profile </h1>
+
+<form action = "{{url_for('studentmain.edit_profile')}}" method = "POST">
+    {{form.hidden_tag()}}
+    {{wtf.form_field(form.firstname)}}
+    {{wtf.form_field(form.lastname)}}
+    {{wtf.form_field(form.username)}}
+    {{wtf.form_field(form.email)}}
+    {{wtf.form_field(form.wpi_id)}}
+    {{wtf.form_field(form.password)}}
+    {{wtf.form_field(form.repassword)}}
+    {{wtf.form_field(form.gpa)}}
+    <br>
+    {{form.majors.label}}
+    {{form.majors()}}
+    {{form.research_topics.label}}
+    {{form.research_topics()}}
+    {{form.programming_languages.label}}
+    {{form.programming_languages()}}
+    {{wtf.form_field(form.submit)}}           
+</form>
+
+{% endblock %}

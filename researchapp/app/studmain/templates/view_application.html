@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="containter mt-4">
+    <div class="card" style="width: 100%; background-color: #f5f0eb;">
+        
+        <div class="card-header" style="background-color: rgb(231, 170, 170)">
+            <h3 style="background-color: rgb(231, 170, 170);">
+                Application for: {{ application.get_position().position_title }}
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <p>Submitted on:
+                <strong>{{ moment(application.timestamp).format('LLL') }}</strong>
+            </p>
+
+
+            {% if application.get_position().reference_required %}
+                <p>Reference Request Submitted To:
+                    <strong>{{ application.get_faculty_ref().firstname }} {{ application.get_faculty_ref().lastname }}</strong>
+                </p>
+
+                {% if application.get_application_status().value == "Withdrawn" %}
+                    <p>Reference Status:
+                        <span class="badge bg-danger" style="color:white">
+                            Recommendation Rescinded
+                        </span>
+                    </p>
+
+                {% else %}
+                    {% if application.get_reference_status().value == "Pending" %}
+                        <p>Reference Status:
+                            <span class="badge bg-primary" style="color:white">Awaiting approval</span>
+                        </p>
+
+                    {% elif application.get_reference_status().value == "Approved" %}
+                        <p>Reference Status:
+                            <span class="badge bg-success" style="color:white">Recommended</span>
+                        </p>
+
+                    {% elif application.get_reference_status().value == "Rejected" %}
+                        <p>Reference Status:
+                            <span class="badge bg-danger" style="color:white">Not Recommended</span>
+                        </p>
+
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+
+            <p>Application status:
+                {% if application.get_application_status().value == "Pending" %}
+                    <span class="badge bg-primary" style="color:white">Pending</span>
+
+                {% elif application.get_application_status().value == "Approved" %}
+                    <span class="badge bg-success" style="color:white">Approved</span>
+
+                {% elif application.get_application_status().value == "Rejected" %}
+                    <span class="badge bg-danger" style="color:white">Denied</span>
+
+                {% elif application.get_application_status().value == "Withdrawn" %}
+                    <span class="badge bg-secondary" style="color:white">Withdrawn</span>
+                {% endif %}
+            </p>
+
+
+            <p><strong>Statement:</strong></p>
+            <div class="card-body border rounded-3" style="background-color:white;">
+                <p>{{ application.statement }}</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
